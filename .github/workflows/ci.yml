@@ -45,7 +45,18 @@ jobs:
         run: |
           chmod +x gradlew
           ./gradlew --no-daemon testReleaseUnitTest lintRelease assembleRelease
-      - name: The launcher stays small
+      - name: Build installable debug APK
+      working-directory: launcher
+      run: ./gradlew --no-daemon assembleDebug
+
+    - name: Upload launcher APK
+      uses: actions/upload-artifact@v4
+      with:
+        name: haier-apple-tv-launcher
+        path: launcher/app/build/outputs/apk/debug/app-debug.apk
+        if-no-files-found: error
+
+    - name: The launcher stays small
         run: |
           size=$(stat -c %s launcher/app/build/outputs/apk/release/app-release.apk)
           echo "release APK: $((size / 1024)) KB"
